@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play, CheckCircle, Zap, Users, Award } from "lucide-react";
-import heroBackground from "@/assets/hero-background.jpg";
+import { Play, CheckCircle, Zap, Users, Award } from "lucide-react";
+import techElements from "@/assets/3d-tech-elements.jpg";
 
 const Hero = () => {
   const scrollToSection = (sectionId: string) => {
@@ -22,21 +22,21 @@ const Hero = () => {
   ];
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background with Enhanced Overlay */}
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background to-accent/5">
+      {/* 3D Tech Elements Background */}
       <div className="absolute inset-0 z-0">
         <img 
-          src={heroBackground} 
-          alt="Modern technology workspace showcasing innovation and digital solutions" 
-          className="w-full h-full object-cover scale-105"
+          src={techElements} 
+          alt="3D technology elements and illustrations" 
+          className="w-full h-full object-cover opacity-10"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/85 to-primary/20"></div>
-        <div className="absolute inset-0 bg-gradient-hero opacity-60"></div>
       </div>
 
-      {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-20 h-20 bg-primary/10 rounded-full blur-xl animate-pulse"></div>
-      <div className="absolute bottom-32 right-16 w-32 h-32 bg-accent/10 rounded-full blur-2xl animate-pulse delay-700"></div>
+      {/* Floating 3D Elements */}
+      <div className="absolute top-20 left-10 w-16 h-16 bg-primary/10 rounded-lg rotate-12 animate-pulse"></div>
+      <div className="absolute top-40 right-20 w-12 h-12 bg-accent/10 rounded-full animate-pulse delay-300"></div>
+      <div className="absolute bottom-32 left-16 w-20 h-20 bg-primary/5 rounded-xl rotate-45 animate-pulse delay-700"></div>
+      <div className="absolute bottom-48 right-32 w-8 h-8 bg-accent/15 rounded-full animate-pulse delay-1000"></div>
 
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-6 py-24">
@@ -59,17 +59,8 @@ const Hero = () => {
               that help businesses <span className="text-primary font-semibold">work smarter</span> and <span className="text-primary font-semibold">grow faster</span>.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-              <Button
-                variant="hero"
-                size="lg"
-                onClick={() => scrollToSection("contact")}
-                className="group shadow-medium hover:shadow-lg transition-all duration-300"
-              >
-                Get Started Today
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
+            {/* CTA */}
+            <div className="flex justify-center items-center mb-16">
               <Button
                 variant="outline"
                 size="lg"

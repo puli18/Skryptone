@@ -1,5 +1,5 @@
 import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
-import skryptoneLogo from "@/assets/skryptone-logo.png";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const scrollToSection = (sectionId: string) => {
@@ -14,7 +14,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <img src={skryptoneLogo} alt="Skryptone" className="h-8 w-auto filter invert" />
+              <h2 className="text-2xl font-bold text-background">Skryptone</h2>
             </div>
             <p className="text-background/80 mb-4 leading-relaxed">
               Skryptone Pty Ltd delivers innovative SaaS and IT solutions that help businesses 
@@ -63,12 +63,20 @@ const Footer = () => {
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => scrollToSection("services")}
-                  className="hover:text-primary transition-colors text-left"
+                <Link
+                  to="/services"
+                  className="hover:text-primary transition-colors text-left block"
                 >
                   Services
-                </button>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/blog"
+                  className="hover:text-primary transition-colors text-left block"
+                >
+                  Blog
+                </Link>
               </li>
               <li>
                 <button

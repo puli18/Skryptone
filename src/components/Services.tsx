@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import EnquireDialog from "@/components/EnquireDialog";
+import { Link } from "react-router-dom";
 import { 
   Code, 
   Headphones, 
@@ -66,35 +68,44 @@ const Services = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <Card key={index} className="hover:shadow-medium transition-all duration-300 hover:-translate-y-1 group">
-              <CardHeader>
-                <div className="text-primary mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {service.icon}
-                </div>
-                <CardTitle className="text-xl">{service.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4 leading-relaxed">
-                  {service.description}
-                </p>
-                <ul className="space-y-2">
-                  {service.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="text-sm text-muted-foreground flex items-center">
-                      <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          ))}
+          {services.map((service, index) => {
+            const serviceId = service.title.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '');
+            return (
+              <Link key={index} to={`/services#${serviceId}`}>
+                <Card className="hover:shadow-medium transition-all duration-300 hover:-translate-y-1 group cursor-pointer h-full">
+                  <CardHeader>
+                    <div className="text-primary mb-4 group-hover:scale-110 transition-transform duration-300">
+                      {service.icon}
+                    </div>
+                    <CardTitle className="text-xl">{service.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4 leading-relaxed">
+                      {service.description}
+                    </p>
+                    <ul className="space-y-2">
+                      {service.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="text-sm text-muted-foreground flex items-center">
+                          <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="hero" size="lg" onClick={scrollToContact}>
-            Get a Custom Quote
-          </Button>
+          <EnquireDialog
+            trigger={
+              <Button variant="hero" size="lg">
+                Get a Custom Quote
+              </Button>
+            }
+          />
         </div>
       </div>
     </section>
