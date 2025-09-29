@@ -2,14 +2,31 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import EnquireDialog from "@/components/EnquireDialog";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     element?.scrollIntoView({ behavior: "smooth" });
+    setIsMenuOpen(false);
+  };
+
+  const navigateToSection = (sectionId: string) => {
+    if (location.pathname === '/') {
+      // If already on home page, just scroll to section
+      scrollToSection(sectionId);
+    } else {
+      // If on another page, navigate to home first, then scroll
+      navigate('/');
+      // Use setTimeout to ensure the page has loaded before scrolling
+      setTimeout(() => {
+        scrollToSection(sectionId);
+      }, 100);
+    }
     setIsMenuOpen(false);
   };
 
@@ -24,10 +41,10 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
             {[
-              { name: 'Home', action: () => scrollToSection('home') },
-              { name: 'About', action: () => scrollToSection('about') },
-              { name: 'Services', action: () => scrollToSection('services') },
-              { name: 'Contact', action: () => scrollToSection('contact') },
+              { name: 'Home', action: null, link: '/' },
+              { name: 'About', action: () => navigateToSection('about') },
+              { name: 'Services', action: null, link: '/services' },
+              { name: 'Contact', action: () => navigateToSection('contact') },
               { name: 'Blog', action: null, link: '/blog' }
             ].map((item) => (
               item.link ? (
@@ -75,10 +92,10 @@ const Header = () => {
         {isMenuOpen && (
           <div className="lg:hidden mt-4 pb-4 space-y-3 border-t border-border/50 pt-4">
             {[
-              { name: 'Home', action: () => scrollToSection('home') },
-              { name: 'About', action: () => scrollToSection('about') },
-              { name: 'Services', action: () => scrollToSection('services') },
-              { name: 'Contact', action: () => scrollToSection('contact') },
+              { name: 'Home', action: null, link: '/' },
+              { name: 'About', action: () => navigateToSection('about') },
+              { name: 'Services', action: null, link: '/services' },
+              { name: 'Contact', action: () => navigateToSection('contact') },
               { name: 'Blog', action: null, link: '/blog' }
             ].map((item) => (
               item.link ? (
