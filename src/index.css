@@ -114,3 +114,28 @@ All colors MUST be HSL.
     scroll-behavior: smooth;
   }
 }
+
+/* Article Content Styling */
+.article-content h2 {
+  @apply text-2xl font-bold mt-8 mb-4 text-foreground;
+}
+
+.article-content h3 {
+  @apply text-xl font-semibold mt-6 mb-3 text-foreground;
+}
+
+.article-content p {
+  @apply mb-4 text-muted-foreground leading-relaxed;
+}
+
+.article-content ul {
+  @apply mb-4 ml-6 list-disc;
+}
+
+.article-content li {
+  @apply mb-2 text-muted-foreground;
+}
+
+.article-content strong {
+  @apply font-semibold text-foreground;
+}

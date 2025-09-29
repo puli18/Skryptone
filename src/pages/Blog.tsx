@@ -204,7 +204,12 @@ const Blog = () => {
                           <Calendar className="h-4 w-4 ml-2" />
                           {new Date(post.date).toLocaleDateString()}
                         </div>
-                        <Button variant="ghost" size="sm" className="group">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="group"
+                          onClick={() => window.location.href = `/blog/${post.id}`}
+                        >
                           Read More
                           <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
                         </Button>
@@ -277,7 +282,12 @@ const Blog = () => {
                           <Calendar className="h-4 w-4 ml-2" />
                           {new Date(post.date).toLocaleDateString()}
                         </div>
-                        <Button variant="ghost" size="sm" className="group">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="group"
+                          onClick={() => window.location.href = `/blog/${post.id}`}
+                        >
                           Read More
                           <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
                         </Button>

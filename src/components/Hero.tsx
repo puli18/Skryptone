@@ -72,14 +72,16 @@ const Hero = () => {
               </Button>
             </div>
 
-            {/* Key Benefits */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-              {benefits.map((benefit, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm font-medium text-foreground bg-background/20 backdrop-blur-sm rounded-lg px-4 py-3">
-                  <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                  <span>{benefit}</span>
-                </div>
-              ))}
+            {/* Key Benefits - Animated Scrolling */}
+            <div className="relative overflow-hidden mb-12">
+              <div className="flex animate-scroll-left space-x-4">
+                {[...benefits, ...benefits].map((benefit, index) => (
+                  <div key={index} className="flex items-center gap-2 text-sm font-medium text-foreground bg-background/20 backdrop-blur-sm rounded-lg px-4 py-3 whitespace-nowrap flex-shrink-0">
+                    <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                    <span>{benefit}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
