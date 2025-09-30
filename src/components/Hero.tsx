@@ -85,18 +85,6 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Stats Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center bg-background/20 backdrop-blur-sm rounded-2xl p-6 border border-border/20 hover:bg-background/30 transition-all duration-300">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl mb-4">
-                  <stat.icon className="h-6 w-6 text-primary" />
-                </div>
-                <div className="text-3xl font-bold text-foreground mb-2">{stat.value}</div>
-                <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>
