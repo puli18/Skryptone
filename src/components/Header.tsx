@@ -39,9 +39,6 @@ const Header = () => {
               src="/Skryptone Logo_Black.svg" 
               alt="Skryptone" 
               className="h-6 w-auto"
-              style={{
-                filter: 'brightness(0) saturate(100%) invert(17%) sepia(94%) saturate(7491%) hue-rotate(240deg) brightness(91%) contrast(101%)'
-              }}
             />
           </Link>
 
