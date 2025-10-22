@@ -1,4 +1,4 @@
-import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import { Facebook, Linkedin, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -98,7 +98,9 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Follow Us</h3>
             <div className="flex space-x-4">
               <a 
-                href="#" 
+                href="https://www.facebook.com/share/1D51v3ZJnJ/?mibextid=wwXIfr" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
                 aria-label="Facebook"
               >
@@ -106,20 +108,27 @@ const Footer = () => {
               </a>
               <a 
                 href="#" 
-                className="hover:text-primary transition-colors"
-                aria-label="Twitter"
+                className="hover:text-primary transition-colors opacity-50 cursor-not-allowed"
+                aria-label="X (formerly Twitter)"
+                title="X account coming soon"
               >
-                <Twitter className="h-5 w-5" />
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
               </a>
               <a 
-                href="#" 
+                href="https://www.linkedin.com/company/skryptone/" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
               <a 
-                href="#" 
+                href="https://www.instagram.com/skryptone?igsh=bGhqcnVvcGo5OHVp" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
                 aria-label="Instagram"
               >
