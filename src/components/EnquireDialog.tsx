@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import emailjs from '@emailjs/browser';
 
 interface EnquireDialogProps {
   trigger: React.ReactNode;
@@ -45,7 +44,7 @@ const EnquireDialog = ({ trigger }: EnquireDialogProps) => {
     "Digital Solutions"
   ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -58,46 +57,23 @@ const EnquireDialog = ({ trigger }: EnquireDialogProps) => {
       return;
     }
 
-    try {
-      // EmailJS configuration
-      const serviceId = 'service_ythi0sg';
-      const templateId = 'template_01fwrxj';
-      const publicKey = 'wYAZDVkqsj4IXK7bV';
-
-      // Prepare template parameters
-      const templateParams = {
-        from_name: formData.name,
-        from_email: formData.email,
-        message: formData.message || 'No additional message provided',
-        service: formData.service,
-        phone: formData.phone || 'Not provided'
-      };
-
-      // Send email using EmailJS
-      await emailjs.send(serviceId, templateId, templateParams, publicKey);
-      
-      toast({
-        title: "Enquiry Sent!",
-        description: "We'll get back to you within 24 hours.",
-      });
-      
-      // Reset form and close dialog
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        service: "",
-        message: ""
-      });
-      setOpen(false);
-    } catch (error) {
-      console.error('Error sending email:', error);
-      toast({
-        title: "Error sending enquiry",
-        description: "Please try again or contact us directly.",
-        variant: "destructive",
-      });
-    }
+    // Here you would typically send the data to your backend
+    console.log("Form submitted:", formData);
+    
+    toast({
+      title: "Enquiry Sent!",
+      description: "We'll get back to you within 24 hours.",
+    });
+    
+    // Reset form and close dialog
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      service: "",
+      message: ""
+    });
+    setOpen(false);
   };
 
   return (
