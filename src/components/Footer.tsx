@@ -14,7 +14,11 @@ const Footer = () => {
           {/* Company Info */}
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <h2 className="text-2xl font-bold text-background">Skryptone</h2>
+              <img 
+                src="/Skryptone Logo_Black.svg" 
+                alt="Skryptone" 
+                className="h-6 w-auto brightness-0 invert"
+              />
             </div>
             <p className="text-background/80 mb-4 leading-relaxed">
               Skryptone Pty Ltd delivers innovative SaaS and IT solutions that help businesses 

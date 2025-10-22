@@ -35,7 +35,14 @@ const Header = () => {
       <div className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <h1 className="text-2xl font-bold text-foreground">Skryptone</h1>
+            <img 
+              src="/Skryptone Logo_Black.svg" 
+              alt="Skryptone" 
+              className="h-6 w-auto"
+              style={{
+                filter: 'brightness(0) saturate(100%) invert(17%) sepia(94%) saturate(7491%) hue-rotate(240deg) brightness(91%) contrast(101%)'
+              }}
+            />
           </Link>
 
           {/* Desktop Navigation */}
