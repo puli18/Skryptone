@@ -48,15 +48,16 @@ const Hero = () => {
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-              Smart SaaS & IT Solutions
+              Perth SaaS Development & IT Support
               <span className="block bg-gradient-primary bg-clip-text text-transparent">
-                for Your Business
+                for Australian Businesses
               </span>
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-              We design and deliver innovative software, IT support, and digital solutions 
-              that help businesses <span className="text-primary font-semibold">work smarter</span> and <span className="text-primary font-semibold">grow faster</span>.
+              Leading Perth software company specializing in <span className="text-primary font-semibold">custom web applications</span>, 
+              <span className="text-primary font-semibold"> IT support services</span>, and <span className="text-primary font-semibold">business automation software</span> 
+              for Australian businesses.
             </p>
 
             {/* CTA */}

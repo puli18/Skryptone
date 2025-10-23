@@ -30,13 +30,13 @@ const About = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            About Skryptone Pty Ltd
+            About Skryptone Pty Ltd - Perth Software Company
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Skryptone Pty Ltd is a leading Australian SaaS and IT services company dedicated to 
-            empowering businesses through technology. We specialize in creating innovative software 
-            solutions, providing reliable IT support, and delivering digital transformation services 
-            that drive growth and efficiency.
+            Skryptone Pty Ltd is a leading Perth SaaS development company and IT support provider 
+            dedicated to empowering Australian businesses through innovative technology solutions. 
+            We specialize in custom web applications, business automation software, online ordering 
+            systems, and comprehensive IT support services that drive growth and efficiency.
           </p>
         </div>
 

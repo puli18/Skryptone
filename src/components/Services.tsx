@@ -60,10 +60,10 @@ const Services = () => {
     <section id="services" className="py-20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Services</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Perth SaaS Development & IT Support Services</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Comprehensive technology solutions designed to accelerate your business growth 
-            and streamline your operations.
+            Comprehensive Perth software development and IT support solutions designed to accelerate 
+            your Australian business growth and streamline operations with custom web applications.
           </p>
         </div>
 

@@ -21,8 +21,9 @@ const Footer = () => {
               />
             </div>
             <p className="text-background/80 mb-4 leading-relaxed">
-              Skryptone Pty Ltd delivers innovative SaaS and IT solutions that help businesses 
-              work smarter and grow faster. We're your trusted technology partner in Australia.
+              Skryptone Pty Ltd is Perth's leading SaaS development company and IT support provider, 
+              delivering innovative custom web applications and business automation software that help 
+              Australian businesses work smarter and grow faster.
             </p>
             <div className="space-y-2 text-sm">
               <p>
@@ -42,6 +43,12 @@ const Footer = () => {
                 >
                   +61 421 140 353
                 </a>
+              </p>
+              <p>
+                <strong>Location:</strong> Perth, Western Australia
+              </p>
+              <p>
+                <strong>Business Hours:</strong> Mon-Fri 9AM-6PM AEST
               </p>
             </div>
           </div>
