@@ -50,6 +50,17 @@ const Footer = () => {
               <p>
                 <strong>Business Hours:</strong> Mon-Fri 9AM-6PM AEST
               </p>
+              <p>
+                <strong>Find Us:</strong>{" "}
+                <a 
+                  href="https://maps.app.goo.gl/mjtVNsWgMqZs9X996" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  View on Google Maps
+                </a>
+              </p>
             </div>
           </div>
 
