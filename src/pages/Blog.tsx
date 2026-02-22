@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,10 +20,102 @@ import {
   Bot,
   Smartphone
 } from "lucide-react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
+type BlogPost = {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  date: string;
+  readTime?: string;
+  categoryId: string;
+  categoryLabel: string;
+  tags: string[];
+  featured?: boolean;
+  image?: string;
+};
+
+const toDateString = (value: unknown) => {
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  if (value && typeof value === "object" && "toDate" in value) {
+    const maybeTimestamp = value as { toDate?: () => Date };
+    if (typeof maybeTimestamp.toDate === "function") {
+      return maybeTimestamp.toDate().toISOString();
+    }
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  return "";
+};
+
+const formatDate = (value: string) => {
+  if (!value) {
+    return "";
+  }
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleDateString();
+};
+
+const estimateReadTime = (htmlContent: string) => {
+  const plainText = htmlContent.replace(/<[^>]*>/g, " ");
+  const wordCount = plainText.trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(wordCount / 200));
+  return `${minutes} min read`;
+};
+
+const toCategoryId = (value: string) => {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};
+
+const normalizePost = (
+  id: string,
+  data: Record<string, unknown>,
+  categoryLookup: Record<string, string>
+): BlogPost => {
+  const content = String(data.content ?? "");
+  const rawCategory = String(data.category ?? "uncategorized");
+  const normalizedCategory = toCategoryId(rawCategory);
+  const categoryId = categoryLookup[normalizedCategory] ? normalizedCategory : normalizedCategory;
+  const categoryLabel = categoryLookup[categoryId] ?? rawCategory;
+
+  return {
+    id,
+    title: String(data.title ?? "Untitled"),
+    excerpt: String(data.excerpt ?? ""),
+    content,
+    author: String(data.author ?? "Skryptone"),
+    date: toDateString(data.date ?? data.publishedAt ?? data.createdAt),
+    readTime: String(data.readTime ?? estimateReadTime(content)),
+    categoryId,
+    categoryLabel,
+    tags: Array.isArray(data.tags) ? data.tags.map(tag => String(tag)) : [],
+    featured: Boolean(data.featured),
+    image: typeof data.image === "string" ? data.image : undefined,
+  };
+};
 
 const Blog = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const categories = [
     { id: "all", name: "All Posts", icon: <TrendingUp className="h-4 w-4" /> },
@@ -32,98 +125,58 @@ const Blog = () => {
     { id: "automation", name: "Automation & AI", icon: <Bot className="h-4 w-4" /> },
     { id: "web-dev", name: "Web Development", icon: <Smartphone className="h-4 w-4" /> }
   ];
+  const categoryLookup = useMemo(() => {
+    return categories.reduce<Record<string, string>>((acc, category) => {
+      acc[category.id] = category.name;
+      return acc;
+    }, {});
+  }, [categories]);
 
-  const blogPosts = [
-    {
-      id: 1,
-      title: "Building Scalable SaaS Applications: A Complete Guide",
-      excerpt: "Learn the essential principles and best practices for creating SaaS applications that can grow with your business from startup to enterprise scale.",
-      content: "Building a scalable SaaS application requires careful planning and architecture decisions from day one. In this comprehensive guide, we'll explore the key components that make SaaS applications successful...",
-      author: "Sarah Johnson",
-      date: "2024-01-15",
-      readTime: "8 min read",
-      category: "saas",
-      tags: ["SaaS", "Architecture", "Scalability", "Cloud"],
-      featured: true,
-      image: "/api/placeholder/600/300"
-    },
-    {
-      id: 2,
-      title: "IT Support Best Practices for Small Businesses",
-      excerpt: "Discover proven strategies to maintain reliable IT infrastructure and provide excellent technical support to your team and customers.",
-      content: "Small businesses often struggle with IT support due to limited resources and expertise. However, implementing the right practices can significantly improve your IT operations...",
-      author: "Mike Chen",
-      date: "2024-01-12",
-      readTime: "6 min read",
-      category: "it-support",
-      tags: ["IT Support", "Small Business", "Infrastructure", "Best Practices"],
-      featured: false,
-      image: "/api/placeholder/600/300"
-    },
-    {
-      id: 3,
-      title: "Social Media Marketing Strategies That Actually Work",
-      excerpt: "Cut through the noise with data-driven social media strategies that generate real engagement and drive business growth.",
-      content: "Social media marketing has evolved significantly, and what worked yesterday might not work today. Here are the current strategies that are delivering real results...",
-      author: "Emma Rodriguez",
-      date: "2024-01-10",
-      readTime: "7 min read",
-      category: "marketing",
-      tags: ["Social Media", "Marketing", "Strategy", "Engagement"],
-      featured: true,
-      image: "/api/placeholder/600/300"
-    },
-    {
-      id: 4,
-      title: "AI Automation: Transforming Business Operations",
-      excerpt: "Explore how artificial intelligence and automation are revolutionizing business processes and learn how to implement these technologies effectively.",
-      content: "AI automation is no longer a futuristic concept—it's a present reality that's transforming how businesses operate. From chatbots to workflow automation...",
-      author: "David Park",
-      date: "2024-01-08",
-      readTime: "9 min read",
-      category: "automation",
-      tags: ["AI", "Automation", "Business Process", "Technology"],
-      featured: false,
-      image: "/api/placeholder/600/300"
-    },
-    {
-      id: 5,
-      title: "Modern Web Development: Trends and Technologies",
-      excerpt: "Stay ahead of the curve with the latest web development trends, frameworks, and technologies that are shaping the future of the web.",
-      content: "Web development is constantly evolving, with new frameworks, tools, and best practices emerging regularly. Here's what's trending in 2024...",
-      author: "Lisa Wang",
-      date: "2024-01-05",
-      readTime: "10 min read",
-      category: "web-dev",
-      tags: ["Web Development", "Trends", "Frameworks", "Technology"],
-      featured: false,
-      image: "/api/placeholder/600/300"
-    },
-    {
-      id: 6,
-      title: "Digital Transformation: A Step-by-Step Guide",
-      excerpt: "Navigate your digital transformation journey with our comprehensive guide covering strategy, implementation, and common pitfalls to avoid.",
-      content: "Digital transformation is essential for businesses to remain competitive in today's market. However, it's not just about adopting new technologies...",
-      author: "James Thompson",
-      date: "2024-01-03",
-      readTime: "12 min read",
-      category: "saas",
-      tags: ["Digital Transformation", "Strategy", "Implementation", "Business"],
-      featured: true,
-      image: "/api/placeholder/600/300"
-    }
-  ];
+  useEffect(() => {
+    let isMounted = true;
 
-  const filteredPosts = blogPosts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === "all" || post.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      setLoadError(null);
 
-  const featuredPosts = blogPosts.filter(post => post.featured);
-  const regularPosts = filteredPosts.filter(post => !post.featured);
+      try {
+        const snapshot = await getDocs(collection(db, "articles"));
+        const loadedPosts = snapshot.docs.map(docSnap =>
+          normalizePost(docSnap.id, docSnap.data(), categoryLookup)
+        );
+        if (isMounted) {
+          setPosts(loadedPosts);
+        }
+      } catch (error) {
+        console.error("Error loading articles:", error);
+        if (isMounted) {
+          setLoadError("Unable to load articles right now.");
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchPosts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filteredPosts = useMemo(() => {
+    return posts.filter(post => {
+      const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesCategory = selectedCategory === "all" || post.categoryId === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [posts, searchTerm, selectedCategory]);
+
+  const featuredPosts = useMemo(() => posts.filter(post => post.featured), [posts]);
 
   return (
     <main className="min-h-screen">
@@ -175,20 +228,29 @@ const Blog = () => {
         </section>
 
         {/* Featured Posts */}
-        {selectedCategory === "all" && searchTerm === "" && (
+        {selectedCategory === "all" && searchTerm === "" && !isLoading && (
           <section className="py-16">
             <div className="container mx-auto px-4">
               <h2 className="text-3xl font-bold mb-8">Featured Articles</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {featuredPosts.map((post) => (
                   <Card key={post.id} className="group hover:shadow-lg transition-shadow duration-300">
-                    <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-t-lg"></div>
+                    {post.image ? (
+                      <img
+                        src={post.image}
+                        alt={post.title}
+                        className="aspect-video w-full rounded-t-lg object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-t-lg"></div>
+                    )}
                     <CardHeader>
                       <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="secondary">{categories.find(c => c.id === post.category)?.name}</Badge>
+                        <Badge variant="secondary">{post.categoryLabel}</Badge>
                         <Badge variant="outline" className="text-xs">
                           <Clock className="h-3 w-3 mr-1" />
-                          {post.readTime}
+                          {post.readTime ?? "5 min read"}
                         </Badge>
                       </div>
                       <CardTitle className="group-hover:text-primary transition-colors">
@@ -202,13 +264,13 @@ const Blog = () => {
                           <User className="h-4 w-4" />
                           {post.author}
                           <Calendar className="h-4 w-4 ml-2" />
-                          {new Date(post.date).toLocaleDateString()}
+                          {formatDate(post.date)}
                         </div>
                         <Button 
                           variant="ghost" 
                           size="sm" 
                           className="group"
-                          onClick={() => window.location.href = `/blog/${post.id}`}
+                          onClick={() => navigate(`/blog/${post.id}`)}
                         >
                           Read More
                           <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
@@ -234,7 +296,22 @@ const Blog = () => {
               </p>
             </div>
 
-            {filteredPosts.length === 0 ? (
+            {isLoading ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">Loading articles...</p>
+              </div>
+            ) : loadError ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">{loadError}</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.location.reload()}
+                  className="mt-4"
+                >
+                  Retry
+                </Button>
+              </div>
+            ) : filteredPosts.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-lg">No articles found matching your criteria.</p>
                 <Button 
@@ -250,15 +327,24 @@ const Blog = () => {
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {regularPosts.map((post) => (
+                {filteredPosts.map((post) => (
                   <Card key={post.id} className="group hover:shadow-lg transition-shadow duration-300">
-                    <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-t-lg"></div>
+                    {post.image ? (
+                      <img
+                        src={post.image}
+                        alt={post.title}
+                        className="aspect-video w-full rounded-t-lg object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-t-lg"></div>
+                    )}
                     <CardHeader>
                       <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="secondary">{categories.find(c => c.id === post.category)?.name}</Badge>
+                        <Badge variant="secondary">{post.categoryLabel}</Badge>
                         <Badge variant="outline" className="text-xs">
                           <Clock className="h-3 w-3 mr-1" />
-                          {post.readTime}
+                          {post.readTime ?? "5 min read"}
                         </Badge>
                       </div>
                       <CardTitle className="group-hover:text-primary transition-colors line-clamp-2">
@@ -280,13 +366,13 @@ const Blog = () => {
                           <User className="h-4 w-4" />
                           {post.author}
                           <Calendar className="h-4 w-4 ml-2" />
-                          {new Date(post.date).toLocaleDateString()}
+                          {formatDate(post.date)}
                         </div>
                         <Button 
                           variant="ghost" 
                           size="sm" 
                           className="group"
-                          onClick={() => window.location.href = `/blog/${post.id}`}
+                          onClick={() => navigate(`/blog/${post.id}`)}
                         >
                           Read More
                           <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
