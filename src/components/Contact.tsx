@@ -5,7 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import emailjs from '@emailjs/browser';
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -21,22 +22,16 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      // EmailJS configuration
-      const serviceId = 'service_ythi0sg';
-      const templateId = 'template_01fwrxj';
-      const publicKey = 'wYAZDVkqsj4IXK7bV';
-
-      // Prepare template parameters
-      const templateParams = {
-        from_name: formData.name,
-        from_email: formData.email,
+      await addDoc(collection(db, "enquiries"), {
+        name: formData.name,
+        email: formData.email,
         message: formData.message,
-        service: 'General Contact',
-        phone: 'Not provided'
-      };
-
-      // Send email using EmailJS
-      await emailjs.send(serviceId, templateId, templateParams, publicKey);
+        phone: "",
+        service: "General Contact",
+        type: "contact",
+        createdAt: serverTimestamp(),
+        source: "contact-form",
+      });
 
       toast({
         title: "Message sent successfully!",
@@ -45,7 +40,7 @@ const Contact = () => {
 
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error("Error saving enquiry:", error);
       toast({
         title: "Error sending message",
         description: "Please try again or contact us directly.",

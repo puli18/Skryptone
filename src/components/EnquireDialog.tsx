@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface EnquireDialogProps {
   trigger: React.ReactNode;
@@ -33,6 +35,7 @@ const EnquireDialog = ({ trigger }: EnquireDialogProps) => {
     service: "",
     message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const services = [
@@ -44,7 +47,7 @@ const EnquireDialog = ({ trigger }: EnquireDialogProps) => {
     "Digital Solutions"
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -57,23 +60,44 @@ const EnquireDialog = ({ trigger }: EnquireDialogProps) => {
       return;
     }
 
-    // Here you would typically send the data to your backend
-    console.log("Form submitted:", formData);
-    
-    toast({
-      title: "Enquiry Sent!",
-      description: "We'll get back to you within 24 hours.",
-    });
-    
-    // Reset form and close dialog
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      service: "",
-      message: ""
-    });
-    setOpen(false);
+    setIsSubmitting(true);
+
+    try {
+      await addDoc(collection(db, "enquiries"), {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service: formData.service,
+        message: formData.message,
+        type: "service-enquiry",
+        createdAt: serverTimestamp(),
+        source: "enquire-dialog",
+      });
+
+      toast({
+        title: "Enquiry Sent!",
+        description: "We'll get back to you within 24 hours.",
+      });
+
+      // Reset form and close dialog
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        service: "",
+        message: ""
+      });
+      setOpen(false);
+    } catch (error) {
+      console.error("Error saving enquiry:", error);
+      toast({
+        title: "Error sending enquiry",
+        description: "Please try again or contact us directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -155,8 +179,8 @@ const EnquireDialog = ({ trigger }: EnquireDialogProps) => {
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
               Cancel
             </Button>
-            <Button type="submit" variant="hero" className="flex-1">
-              Send Enquiry
+            <Button type="submit" variant="hero" className="flex-1" disabled={isSubmitting}>
+              {isSubmitting ? "Sending..." : "Send Enquiry"}
             </Button>
           </div>
         </form>
