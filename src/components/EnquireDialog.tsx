@@ -70,6 +70,7 @@ const EnquireDialog = ({ trigger }: EnquireDialogProps) => {
         service: formData.service,
         message: formData.message,
         type: "service-enquiry",
+        status: "new",
         createdAt: serverTimestamp(),
         source: "enquire-dialog",
       });

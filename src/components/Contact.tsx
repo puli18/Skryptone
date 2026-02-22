@@ -29,6 +29,7 @@ const Contact = () => {
         phone: "",
         service: "General Contact",
         type: "contact",
+        status: "new",
         createdAt: serverTimestamp(),
         source: "contact-form",
       });
